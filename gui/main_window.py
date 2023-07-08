@@ -1,6 +1,9 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton
-from gui.recipe_window import RecipeWindow  # Import the existing recipe_window code
+from gui.dish_window import DishWindow  # Import the existing dish_window code
+from gui.component_window import ComponentWindow  # Import the existing component_window code
+from gui.help_window import HelpWindow  # Import the existing component_window code
+from gui.vendor_window import VendorWindow  # Import the existing vendor_window code
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -14,8 +17,8 @@ class MainWindow(QMainWindow):
         main_widget.setLayout(main_layout)
         
         # Create buttons to open windows
-        recipe_button = QPushButton("➕ Manage Recipes")
-        recipe_button.clicked.connect(self.open_recipe_window)
+        recipe_button = QPushButton("➕ Manage Dishes")
+        recipe_button.clicked.connect(self.open_dish_window)
         main_layout.addWidget(recipe_button)
         
         components_button = QPushButton("🔧 Manage Components")
@@ -36,25 +39,27 @@ class MainWindow(QMainWindow):
         
         self.setCentralWidget(main_widget)
     
-    def open_recipe_window(self):
-        self.recipe_window = RecipeWindow()
-        self.recipe_window.show()
+    def open_dish_window(self):
+        self.dish_window = DishWindow()
+        self.dish_window.show()
     
     def open_components_window(self):
-        # Implement opening of components window
-        pass
+        self.component_window = ComponentWindow()
+        self.component_window.show()
     
     def open_vendor_window(self):
-        # Implement opening of vendor window
-        pass
+        self.vendor_window = VendorWindow()
+        self.vendor_window.show()
     
     def open_settings_window(self):
+        # self.settings_window = SettingsWindow()
+        # self.settings_window.show()
         # Implement opening of settings window
         pass
     
     def open_help_window(self):
-        # Implement opening of help window
-        pass
+        self.help_window = HelpWindow()
+        self.help_window.show()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
