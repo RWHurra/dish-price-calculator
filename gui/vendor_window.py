@@ -1,5 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox
+from objects.vendor import Vendor
 
 class VendorWindow(QMainWindow):
     def __init__(self):
@@ -7,6 +8,9 @@ class VendorWindow(QMainWindow):
         self.setWindowTitle("Vendor Manager")
         self.setup_ui()
         
+        # Initialize Vendor class
+        self.vendor_instance = Vendor()
+
         # Initialize vendor data
         self.vendors = []
         self.load_vendors()  # Load existing vendors from JSON or dictionary
@@ -89,12 +93,13 @@ class VendorWindow(QMainWindow):
             QMessageBox.warning(self, "Error", "Please select a vendor to delete.")
     
     def load_vendors(self):
-        # Load vendors from JSON or dictionary and populate self.vendors
-        pass
+        try:
+            self.vendors = self.vendor_instance.get_vendors()
+        except:
+            pass
         
     def save_vendors(self):
-        # Save self.vendors to JSON or dictionary
-        pass
+        self.vendor_instance.save_vendors(self.vendors)
     
     def closeEvent(self, event):
         self.save_vendors()

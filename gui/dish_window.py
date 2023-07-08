@@ -1,5 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QComboBox
+from objects.component import Component
+from objects.dish import Dish
 
 class DishWindow(QMainWindow):
     def __init__(self):
@@ -7,6 +9,9 @@ class DishWindow(QMainWindow):
         self.setWindowTitle("Dish Manager")
         self.setup_ui()
         
+        # Initialize Dish class
+        self.dish_instance = Dish()
+
         # Initialize dish data
         self.dishes = []
         self.load_dishes()  # Load existing dishes from JSON or dictionary
@@ -18,6 +23,9 @@ class DishWindow(QMainWindow):
         main_widget = QWidget()
         main_layout = QHBoxLayout()
         main_widget.setLayout(main_layout)
+
+        # Initialize Component class
+        component_instance = Component()
         
         # Create table widget for displaying dishes
         self.table_widget = QTableWidget()
@@ -44,7 +52,10 @@ class DishWindow(QMainWindow):
         component_layout = QHBoxLayout()
         component_label = QLabel("Dish Component:")
         self.component_combo = QComboBox()
-        self.component_combo.addItems(["Dish Component 1", "Dish Component 2", "Dish Component 3"])  # Add your defined dish components here
+        try:
+            self.component_combo.addItems(component_instance.load_components())
+        except:
+            self.component_combo.addItems(['No components found'])
         quantity_label = QLabel("Quantity:")
         self.quantity_input = QLineEdit()
         add_component_button = QPushButton("➕ Add Dish Component")
@@ -113,7 +124,7 @@ class DishWindow(QMainWindow):
         # Create the dish dictionary
         dish = {
             "name": name,
-            "total_price": 0,  # total_price (implement calculation logic),
+            "total_price": self.dish_instance.get_total_cost(components),  # total_price (implement calculation logic),
             "components": components
         }
         
@@ -139,11 +150,13 @@ class DishWindow(QMainWindow):
             QMessageBox.warning(self, "Error", "Please select a dish to delete.")
     
     def load_dishes(self):
-        # Load dishes from JSON or dictionary and populate self.dishes
-        pass
+        try:
+            self.dishes =  self.dish_instance.get_dishes()
+        except:
+            pass
         
     def save_dishes(self):
-        # Save self.dishes to JSON or dictionary
+        self.dish_instance.save_dishes(self.dishes)
         pass
     
     def closeEvent(self, event):

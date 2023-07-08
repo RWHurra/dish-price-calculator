@@ -1,5 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QComboBox
+from objects.component import Component
+from objects.vendor import Vendor
 
 class ComponentWindow(QMainWindow):
     def __init__(self):
@@ -7,6 +9,9 @@ class ComponentWindow(QMainWindow):
         self.setWindowTitle("Component Manager")
         self.setup_ui()
         
+        # Initialize Component class
+        self.component_instance = Component()
+
         # Initialize component data
         self.components = []
         self.load_components()  # Load existing components from JSON or dictionary
@@ -18,6 +23,9 @@ class ComponentWindow(QMainWindow):
         main_widget = QWidget()
         main_layout = QHBoxLayout()
         main_widget.setLayout(main_layout)
+
+        # Initialize Vendor class
+        vendor_instance = Vendor()
         
         # Create table widget for displaying components
         self.table_widget = QTableWidget()
@@ -47,7 +55,10 @@ class ComponentWindow(QMainWindow):
         
         vendor_label = QLabel("Vendor:")
         self.vendor_combo = QComboBox()
-        self.vendor_combo.addItems(["Vendor 1", "Vendor 2", "Vendor 3"])  # Add your defined vendors here
+        try:
+            self.vendor_combo.addItems(vendor_instance.load_vendors())
+        except:
+            self.vendor_combo.addItems(["No vendors found"])
         add_layout.addWidget(vendor_label)
         add_layout.addWidget(self.vendor_combo)
         
@@ -100,16 +111,17 @@ class ComponentWindow(QMainWindow):
         self.price_input.clear()
         self.unit_input.clear()
     
-    def save_component(self):
-        # Implement saving of component data to JSON or dictionary
-        pass
+    def save_components(self):
+        self.component_instance.save_components(self.components)
     
     def load_components(self):
-        # Implement loading of component data from JSON or dictionary
-        pass
+        try:
+            self.components =  self.component_instance.get_components()
+        except:
+            pass
     
     def closeEvent(self, event):
-        self.save_component()
+        self.save_components()
         event.accept()
 
 if __name__ == "__main__":
