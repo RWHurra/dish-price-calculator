@@ -17,7 +17,7 @@ class Dish():
 
     def get_total_cost(self, components):
         for item in components:
-            component_name = item["component"]
+            component_name = item["component"].split(" (")[0]
             quantity = float(item["quantity"])
             
             for component in self.component_instance.get_components():

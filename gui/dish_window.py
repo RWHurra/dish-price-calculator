@@ -18,7 +18,7 @@ class DishWindow(QMainWindow):
         
         # Populate table with dishes
         self.populate_table()
-    
+
     def setup_ui(self):
         main_widget = QWidget()
         main_layout = QHBoxLayout()
@@ -26,29 +26,42 @@ class DishWindow(QMainWindow):
 
         # Initialize Component class
         component_instance = Component()
-        
+
+        # Create layout for the left side (dishes table and delete button)
+        left_layout = QVBoxLayout()
+        main_layout.addLayout(left_layout)
+
         # Create table widget for displaying dishes
         self.table_widget = QTableWidget()
         self.table_widget.setColumnCount(3)
         self.table_widget.setHorizontalHeaderLabels(["Name", "Total Price", "Dish Components"])
-        main_layout.addWidget(self.table_widget)
-        
+        left_layout.addWidget(self.table_widget)
+
+        # Create button for deleting a dish
+        delete_button = QPushButton("🗑️ Delete Dish")
+        delete_button.clicked.connect(self.delete_dish)
+        left_layout.addWidget(delete_button)
+
+        # Create layout for the right side (GUI to create a new dish)
+        right_layout = QVBoxLayout()
+        main_layout.addLayout(right_layout)
+
         # Create widget for adding a new dish
         add_widget = QWidget()
         add_layout = QVBoxLayout()
         add_widget.setLayout(add_layout)
-        
+
         name_label = QLabel("Name:")
         self.name_input = QLineEdit()
         add_layout.addWidget(name_label)
         add_layout.addWidget(self.name_input)
-        
+
         # Create table widget for listing assigned dish components
         self.components_table = QTableWidget()
         self.components_table.setColumnCount(2)
         self.components_table.setHorizontalHeaderLabels(["Dish Component", "Quantity"])
         add_layout.addWidget(self.components_table)
-        
+
         component_layout = QHBoxLayout()
         component_label = QLabel("Dish Component:")
         self.component_combo = QComboBox()
@@ -66,15 +79,15 @@ class DishWindow(QMainWindow):
         component_layout.addWidget(self.quantity_input)
         component_layout.addWidget(add_component_button)
         add_layout.addLayout(component_layout)
-        
+
         save_button = QPushButton("💾 Save Dish")
         save_button.clicked.connect(self.save_dish)
         add_layout.addWidget(save_button)
-        
-        main_layout.addWidget(add_widget)
-        
+
+        right_layout.addWidget(add_widget)
+
         self.setCentralWidget(main_widget)
-    
+
     def populate_table(self):
         self.table_widget.setRowCount(len(self.dishes))
         
