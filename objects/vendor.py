@@ -14,5 +14,5 @@ class Vendor():
             json.dump(vendors, outfile)
     
     def load_vendors(self):
-        self.vendors_names = [item["name"] for item in self.get_vendors()]
+        self.vendor_names = [item["name"] for item in self.get_vendors()]
         return self.vendor_names
