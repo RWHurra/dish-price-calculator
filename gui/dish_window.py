@@ -14,7 +14,7 @@ class DishWindow(QMainWindow):
 
         # Initialize dish data
         self.dishes = []
-        self.load_dishes()  # Load existing dishes from JSON or dictionary
+        self.load_dishes()
         
         # Populate table with dishes
         self.populate_table()
@@ -25,7 +25,7 @@ class DishWindow(QMainWindow):
         main_widget.setLayout(main_layout)
 
         # Initialize Component class
-        component_instance = Component()
+        self.component_instance = Component()
 
         # Create layout for the left side (dishes table and delete button)
         left_layout = QVBoxLayout()
@@ -66,7 +66,7 @@ class DishWindow(QMainWindow):
         component_label = QLabel("Dish Component:")
         self.component_combo = QComboBox()
         try:
-            self.component_combo.addItems(component_instance.load_components())
+            self.component_combo.addItems(self.component_instance.load_components())
         except:
             self.component_combo.addItems(['No components found'])
         quantity_label = QLabel("Quantity:")
@@ -94,12 +94,20 @@ class DishWindow(QMainWindow):
         for row, dish in enumerate(self.dishes):
             name_item = QTableWidgetItem(dish["name"])
             total_price_item = QTableWidgetItem(str(dish["total_price"]))
-            components_item = QTableWidgetItem(str(self.list_dish_components(dish['components'])))
+            component_details = self.get_component_details(dish)
+            components_item = QTableWidgetItem(str(component_details))
             
             self.table_widget.setItem(row, 0, name_item)
             self.table_widget.setItem(row, 1, total_price_item)
             self.table_widget.setItem(row, 2, components_item)
     
+    def get_component_details(self, dish):
+        # I have no idea how the line below works, got it from ChatGPT
+        # but it lists the components of the dish in the following format:
+        # <component_name> <component_quantity> <component_unit>
+        components_with_quantity_and_unit = (", ".join([f"{component['component']} {component['quantity']} {next(item['unit'] for item in self.component_instance.get_components() if item['name'] == component['component'])}" for component in dish['components']]))
+        return components_with_quantity_and_unit
+
     def list_dish_components(self, components_list):
         components = ', '.join([item['component'] for item in components_list])
         return components
@@ -126,7 +134,7 @@ class DishWindow(QMainWindow):
         component_rows = self.components_table.rowCount()
         components = []
         for row in range(component_rows):
-            component = self.components_table.item(row, 0).text()
+            component = self.components_table.item(row, 0).text().split(" (")[0] # The split removes unit from string
             quantity = self.components_table.item(row, 1).text()
             components.append({"component": component, "quantity": quantity})
         
