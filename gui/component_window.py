@@ -103,6 +103,10 @@ class ComponentWindow(QMainWindow):
         if not self.user_input_validated(name, price, unit, vendor):
             return
 
+        # Calculate price if inputted as formula, and make float
+        if type(price) is not float:
+            price = float(eval(price))
+
         # Create the component dictionary
         component = self.component_instance.create_component(name, price, unit, vendor)
 
@@ -129,6 +133,7 @@ class ComponentWindow(QMainWindow):
             QMessageBox.warning(self, "Error", "Make sure to enter a name and unit.")
             return False
         try:
+            price = eval(price)
             float(price)
         except:
             QMessageBox.warning(self, "Error", "Make sure price is of type float.")
