@@ -21,52 +21,17 @@ class ComponentWindow(QMainWindow):
     
     def setup_ui(self):
         main_widget = QWidget()
-        main_layout = QHBoxLayout()
-        main_widget.setLayout(main_layout)
+        self.main_layout = QHBoxLayout()
+        main_widget.setLayout(self.main_layout)
 
         # Initialize Vendor class
-        vendor_instance = Vendor()
+        self.vendor_instance = Vendor()
         
         # Create table widget for displaying components
-        self.table_widget = QTableWidget()
-        self.table_widget.setColumnCount(4)
-        self.table_widget.setHorizontalHeaderLabels(["Name", "Price", "Unit", "Vendor"])
-        main_layout.addWidget(self.table_widget)
+        self.create_table_widget()
         
         # Create widget for adding a new component
-        add_widget = QWidget()
-        add_layout = QVBoxLayout()
-        add_widget.setLayout(add_layout)
-        
-        name_label = QLabel("Name:")
-        self.name_input = QLineEdit()
-        add_layout.addWidget(name_label)
-        add_layout.addWidget(self.name_input)
-        
-        price_label = QLabel("Price:")
-        self.price_input = QLineEdit()
-        add_layout.addWidget(price_label)
-        add_layout.addWidget(self.price_input)
-        
-        unit_label = QLabel("Unit:")
-        self.unit_input = QLineEdit()
-        add_layout.addWidget(unit_label)
-        add_layout.addWidget(self.unit_input)
-        
-        vendor_label = QLabel("Vendor:")
-        self.vendor_combo = QComboBox()
-        try:
-            self.vendor_combo.addItems(vendor_instance.load_vendors())
-        except:
-            self.vendor_combo.addItems(["No vendors found"])
-        add_layout.addWidget(vendor_label)
-        add_layout.addWidget(self.vendor_combo)
-        
-        save_button = QPushButton("💾 Save Component")
-        save_button.clicked.connect(self.add_component)  # Change to add_component()
-        add_layout.addWidget(save_button)
-        
-        main_layout.addWidget(add_widget)
+        self.create_add_component_widget()
         
         self.setCentralWidget(main_widget)
     
@@ -83,26 +48,67 @@ class ComponentWindow(QMainWindow):
             self.table_widget.setItem(row, 1, price_item)
             self.table_widget.setItem(row, 2, unit_item)
             self.table_widget.setItem(row, 3, vendor_item)
-    
+
+    def create_table_widget(self):
+        self.table_widget = QTableWidget()
+        self.table_widget.setColumnCount(4)
+        self.table_widget.setHorizontalHeaderLabels(["Name", "Price", "Unit", "Vendor"])
+        self.main_layout.addWidget(self.table_widget)
+
+    def create_add_component_widget(self):
+        add_widget = QWidget()
+        add_layout = QVBoxLayout()
+        add_widget.setLayout(add_layout)
+        
+        # Create input for component name
+        name_label = QLabel("Name:")
+        self.name_input = QLineEdit()
+        add_layout.addWidget(name_label)
+        add_layout.addWidget(self.name_input)
+        
+        # Create input for component price
+        price_label = QLabel("Price:")
+        self.price_input = QLineEdit()
+        add_layout.addWidget(price_label)
+        add_layout.addWidget(self.price_input)
+        
+        # Create input for component unit
+        unit_label = QLabel("Unit:")
+        self.unit_input = QLineEdit()
+        add_layout.addWidget(unit_label)
+        add_layout.addWidget(self.unit_input)
+        
+        # Create input for component vendor
+        vendor_label = QLabel("Vendor:")
+        self.vendor_combo = QComboBox()
+        try:
+            self.vendor_combo.addItems(self.vendor_instance.load_vendors())
+        except:
+            self.vendor_combo.addItems(["No vendors found"])
+        add_layout.addWidget(vendor_label)
+        add_layout.addWidget(self.vendor_combo)
+
+        # Create save component button
+        save_button = QPushButton("💾 Save Component")
+        save_button.clicked.connect(self.add_component)
+        add_layout.addWidget(save_button)
+        
+        self.main_layout.addWidget(add_widget)
+
     def add_component(self):
-        name = self.name_input.text()
-        price = float(self.price_input.text())
-        unit = self.unit_input.text()
-        vendor = self.vendor_combo.currentText()
+        # Get user input for new component
+        name, price, unit, vendor = self.get_user_input()
         
-        # Perform any necessary validation on input
-        
+        # Validate user input data
+        if not self.user_input_validated(name, price, unit, vendor):
+            return
+
         # Create the component dictionary
-        component = {
-            "name": name,
-            "price": price,
-            "unit": unit,
-            "vendor": vendor
-        }
-        
+        component = self.component_instance.create_component(name, price, unit, vendor)
+
         # Add the component to the list
         self.components.append(component)
-        
+
         # Update the table
         self.populate_table()
         
@@ -111,6 +117,26 @@ class ComponentWindow(QMainWindow):
         self.price_input.clear()
         self.unit_input.clear()
     
+    def get_user_input(self):
+        name = self.name_input.text()
+        price = self.price_input.text()
+        unit = self.unit_input.text()
+        vendor = self.vendor_combo.currentText()
+        return name, price, unit, vendor
+
+    def user_input_validated(self, name, price, unit, vendor):
+        if (name == "" or unit == ""):
+            QMessageBox.warning(self, "Error", "Make sure to enter a name and unit.")
+            return False
+        try:
+            float(price)
+        except:
+            QMessageBox.warning(self, "Error", "Make sure price is of type float.")
+            return False
+        else:
+            return True
+        
+
     def save_components(self):
         self.component_instance.save_components(self.components)
     

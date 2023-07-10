@@ -7,12 +7,12 @@ class Dish():
     component_instance = Component()
 
     def get_dishes(self):
-        with open('dishes.json') as json_file:
+        with open('data/dishes.json') as json_file:
             self.dishes = json.load(json_file)
         return self.dishes
 
     def save_dishes(self, dishes):
-        with open("dishes.json", "w") as outfile:
+        with open("data/dishes.json", "w") as outfile:
             json.dump(dishes, outfile)
 
     def get_total_cost(self, components):
