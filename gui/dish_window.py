@@ -160,11 +160,7 @@ class DishWindow(QMainWindow):
         # Calculate total price based on component prices and quantities
         
         # Create the dish dictionary
-        dish = {
-            "name": name,
-            "total_price": self.dish_instance.get_total_cost(components),  # total_price (implement calculation logic),
-            "components": components
-        }
+        dish = self.dish_instance.create_dish(name, components)
         
         # Add the dish to the list
         self.dishes.append(dish)
