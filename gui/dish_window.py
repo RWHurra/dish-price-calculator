@@ -37,6 +37,9 @@ class DishWindow(QMainWindow):
         # Create button for deleting a dish
         self.create_delete_dish_button()
 
+        # Create button to save dish as component
+        self.create_save_as_component_button()
+
         # Create layout for the right side (GUI to create a new dish)
         self.right_layout = QVBoxLayout()
         main_layout.addLayout(self.right_layout)
@@ -72,6 +75,11 @@ class DishWindow(QMainWindow):
         delete_button = QPushButton("🗑️ Delete Dish")
         delete_button.clicked.connect(self.delete_dish)
         self.left_layout.addWidget(delete_button)
+
+    def create_save_as_component_button(self):
+        save_as_component_button = QPushButton("➕ Save Dish as Component")
+        save_as_component_button.clicked.connect(self.add_as_component)
+        self.left_layout.addWidget(save_as_component_button)
 
     def create_new_dish_widget(self):
         self.add_widget = QWidget()
@@ -183,6 +191,20 @@ class DishWindow(QMainWindow):
         else:
             QMessageBox.warning(self, "Error", "Please select a dish to delete.")
     
+    def add_as_component(self):
+        selected_rows = self.table_widget.selectedItems()
+
+        if selected_rows:
+            row = selected_rows[0].row()
+            selected_dish = self.dishes[row]
+            component = self.component_instance.create_component(selected_dish['name'], selected_dish['total_price'], 'UNIT', 'In house')
+            components = self.component_instance.get_components()
+            components.append(component)
+            self.component_instance.save_components(components)
+            self.component_combo.addItem(component['name'] + " (" + component['unit'] + ")")
+        else:
+            QMessageBox.warning(self, "Error", "Please select a dish to add as component.")
+
     def load_dishes(self):
         try:
             self.dishes =  self.dish_instance.get_dishes()
