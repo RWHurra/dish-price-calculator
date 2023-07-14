@@ -140,6 +140,13 @@ class DishWindow(QMainWindow):
                 unit = component_source['unit']
 
         quantity = self.quantity_input.text()
+
+        try:
+            float(quantity)
+        except:
+            QMessageBox.warning(self, "Error", "Component quantity must be a float.")
+            return
+
         
         # Perform any necessary validation on input
         
@@ -154,6 +161,9 @@ class DishWindow(QMainWindow):
     
     def save_dish(self):
         name = self.name_input.text()
+        if name == "":
+            QMessageBox.warning(self, "Error", "Dish must have a name.")
+            return
         
         # Retrieve components from the components table
         component_rows = self.components_table.rowCount()

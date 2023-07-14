@@ -63,8 +63,10 @@ class VendorWindow(QMainWindow):
     def add_vendor(self):
         name = self.name_input.text()
         contact = self.contact_input.text()
-        
-        # Perform any necessary validation on input
+
+        if name == "" or contact == "":
+            QMessageBox.warning(self, "Error", "Vendor must have a name and contact.")
+            return
         
         # Create the vendor dictionary
         vendor = {
