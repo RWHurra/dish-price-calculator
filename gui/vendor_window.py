@@ -69,10 +69,7 @@ class VendorWindow(QMainWindow):
             return
         
         # Create the vendor dictionary
-        vendor = {
-            "name": name,
-            "contact": contact
-        }
+        vendor = self.vendor_instance.create_vendor(name, contact)
         
         # Add the vendor to the list
         self.vendors.append(vendor)

@@ -4,6 +4,13 @@ class Vendor():
     vendors = []
     vendor_names = []
 
+    def create_vendor(self, name, contact):
+        vendor = {
+        "name": name,
+        "contact": contact
+        }
+        return vendor
+
     def get_vendors(self):
         with open('data/vendors.json') as json_file:
             self.vendors = json.load(json_file)
