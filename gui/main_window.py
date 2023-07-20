@@ -8,7 +8,7 @@ from gui.vendor_window import VendorWindow  # Import the existing vendor_window 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Main Window")
+        self.setWindowTitle("Dish price calculator")
         self.setup_ui()
     
     def setup_ui(self):

@@ -1,7 +1,8 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QComboBox, QInputDialog
 from objects.component import Component
 from objects.dish import Dish
+from gui.dish_as_component_window import DishAsComponent
 
 class DishWindow(QMainWindow):
     def __init__(self):
@@ -206,14 +207,17 @@ class DishWindow(QMainWindow):
 
         if selected_rows:
             row = selected_rows[0].row()
-            selected_dish = self.dishes[row]
-            component = self.component_instance.create_component(selected_dish['name'], selected_dish['total_price'], 'UNIT', 'In house')
-            components = self.component_instance.get_components()
-            components.append(component)
-            self.component_instance.save_components(components)
-            self.component_combo.addItem(component['name'] + " (" + component['unit'] + ")")
+            self.selected_dish = self.dishes[row]
+            self.create_add_component_input_dialog()
         else:
             QMessageBox.warning(self, "Error", "Please select a dish to add as component.")
+
+    def create_add_component_input_dialog(self):
+        self.dish_as_component_window = DishAsComponent(self.selected_dish, self.component_combo)
+        self.dish_as_component_window.show()
+
+    def get_selected_dish(self):
+        return self.selected_dish
 
     def load_dishes(self):
         try:
